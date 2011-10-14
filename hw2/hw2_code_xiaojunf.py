@@ -145,37 +145,7 @@ def combine_features(feature_files_list,output_file):
         fout.write(k+' '+v+' '+fins[1][k]+'\n')
     fout.close()
 
-        
 
-#    root = ROOT+directory_name
-#    files = PlaintextCorpusReader(root,'.*')
-#    fin_model = None
-#    hel_model = None
-#    res_model = None
-#    co_model = None
-#    feature_set_file = 'taggs'
-#    output = open(output_file,'w')
-#    feature_list = open(feature_set_file).read().split()# TODO, IF POS, WHERE IS FEATURE LIST
-#    if features_to_use.__contains__('lm'):
-#        fin_model = BigramModel('Finance',root)
-#        hel_model = BigramModel('Health',root)
-#        res_model = BigramModel('Computers_and_the_Internet',root)
-#        co_model = BigramModel('Research',root)
-#
-#    for fileid in files.fileids():
-#        __output_header(output,directory_name,fileid)
-#        if features_to_use.__contains__('lm'):
-#            __write_lm(output,files,fileid,
-#                   fin_model,hel_model,res_model,co_model)
-#            output.write(' ')
-#        if features_to_use.__contains__('pos'):
-#            __write_pos(output,files,fileid,feature_list)
-#            output.write(' ')
-#        if features_to_use.__contains__('coarse'):
-#            __write_coarse(output,files,fileid)
-#            output.write(' ')
-#        output.write('\n')
-#    output.close()
 
 if __name__ == '__main__':
 #    get_coarse_level_features('Training_set_sm
