@@ -14,8 +14,8 @@ def __output_header(output, dataset,fileid):
 
 def __write_coarse(output,files,fileid):
     stop_list = open(ROOT+'stopwlist.txt').read().split()
-    tokens = files.raw(fileid).split()
-    sents = files.raw(fileid).split('\n')[:-1]
+    tokens = files.words(fileid)
+    sents = files.sents(fileid)
     output.write('tok:%d ' %len(tokens))
     output.write('typ:%d ' %len(set(tokens)))
     output.write('con:%d ' %len([x for x in tokens if x not in stop_list]))
@@ -56,12 +56,10 @@ def __merge_tag():
 
 def prepare_pos_features(Language_model_set, output_file):
     tag_set,TAG_DIC = __merge_tag()
-    
     root = ROOT+Language_model_set
     files = PlaintextCorpusReader(root,'.*')
-    pos_tag_list = nltk.pos_tag(files.raw().split())
+    pos_tag_list = nltk.pos_tag(files.words())
     cfd = nltk.ConditionalFreqDist((TAG_DIC[t],w) for (w,t) in pos_tag_list if t in tag_set)
-
     output = open(output_file,'w')
     def write2file(tag,num):
         for w in cfd[tag].keys()[:num]:
@@ -75,7 +73,7 @@ def prepare_pos_features(Language_model_set, output_file):
 
 def __write_pos(output,files,fileid,feature_list):
     tag_set,TAG_DIC = __merge_tag()
-    pos_tag_list = nltk.pos_tag(files.raw(fileid).split())
+    pos_tag_list = nltk.pos_tag(files.words(fileid))
     word_list = [TAG_DIC[t]+w for (w,t) in pos_tag_list if t in tag_set]
     fqd = FreqDist(word_list)
     for w in feature_list:
@@ -94,15 +92,17 @@ def get_pos_features(dataset,feature_set_file,output_file):
     output.close()
 
 class BigramModel:
-    def __init__(self,root,category):
+    def __init__(self,category,root):
         self.word_list = PlaintextCorpusReader(
-            os.path.join(root,category),'.*').raw().split()
+            os.path.join(root,category),'.*').words()
         self.bigram = nltk.bigrams(self.word_list)
         self.freqdist = FreqDist(self.word_list)
         self.cfd = nltk.ConditionalFreqDist(self.bigram)
     def get_prob_per(self,word_list): #TODO MODIFY THE FIRST WORD FREQUENCY
         N = len(set(word_list))
-        prob = math.log(self.freqdist.freq(word_list[0]))
+
+        prob = math.log(self.freqdist[word_list[0]]+1)-math.log(len(self.freqdist.keys())+N)
+
         for (pre,w) in nltk.bigrams(word_list):
             prob = prob+math.log(self.cfd[pre][w]+1)-math.log(
                         len(self.cfd[pre].keys())+N)
@@ -110,12 +110,12 @@ class BigramModel:
 
 def __write_lm(output,files,fileid,fin_model,hel_model,res_model,co_model):
 
-    word_list = files.raw(fileid).split()
+    word_list = files.words(fileid)
     finprob,finper = fin_model.get_prob_per(word_list)
     hlprob,hlper = hel_model.get_prob_per(word_list)
     resprob,resper = res_model.get_prob_per(word_list)
     coprob,coper = co_model.get_prob_per(word_list)
-    output.write('finprob:%0.1f hlprob:%0.1f resprob:%0.1f coprob:%0.1f'
+    output.write('finprob:%0.1f hlprob:%0.1f resprob:%0.1f coprob:%0.1f '
                                     %(finprob,hlprob,resprob,coprob))
     output.write('finper:%0.1f hlper:%0.1f resper:%0.1f coper:%0.1f'
                                     %(finper,hlper,resper,coper))
@@ -127,7 +127,7 @@ def get_lm_features(dataset,output_file):
     files = PlaintextCorpusReader(root,'.*')
     fin_model = BigramModel('Finance',root)
     hel_model = BigramModel('Health',root)
-    res_model = BigramModel('Computer_and_the_Internet',root)
+    res_model = BigramModel('Computers_and_the_Internet',root)
     co_model = BigramModel('Research',root)
     output = open(output_file,'w')
     for fileid in files.fileids():
@@ -137,35 +137,49 @@ def get_lm_features(dataset,output_file):
         output.write('\n')
     output.close()
 
-def get_feature_file(directory_name,features_to_use,output_file):
-    root = ROOT+directory_name
-    files = PlaintextCorpusReader(root,'.*')
-    fin_model = None
-    hel_model = None
-    res_model = None
-    co_model = None
-    
-    output = open(output_file,'w')
-    feature_list = open(feature_set_file).read().split()# TODO, IF POS, WHERE IS FEATURE LIST
-    if features_to_use.__contains__('lm'):
-        fin_model = BigramModel('Finance',root)
-        hel_model = BigramModel('Health',root)
-        res_model = BigramModel('Computer_and_the_Internet',root)
-        co_model = BigramModel('Research',root)
+def combine_features(feature_files_list,output_file):
+    fins = [dict(line.split(None,1) for line in open(file).readlines()) for file in feature_files_list]
+    fout = open(output_file,'w')
 
-    for fileid in files.fileids():
-        __output_header(output,directory_name,fileid)
-        if features_to_use.__contains__('lm'):
-            __write_lm(output,files,fileid,
-                   fin_model,hel_model,res_model,co_model)
-        if features_to_use.__contains__('pos'):
-            __write_pos(output,files,fileid,feature_list)
-        if features_to_use.__contains__('coarse'):
-            __write_coarse(output,files,fileid)
-        output.write('\n')
-    output.close()
+    for (k,v) in fins[0].items():
+        fout.write(k+' '+v+' '+fins[1][k]+'\n')
+    fout.close()
+
+        
+
+#    root = ROOT+directory_name
+#    files = PlaintextCorpusReader(root,'.*')
+#    fin_model = None
+#    hel_model = None
+#    res_model = None
+#    co_model = None
+#    feature_set_file = 'taggs'
+#    output = open(output_file,'w')
+#    feature_list = open(feature_set_file).read().split()# TODO, IF POS, WHERE IS FEATURE LIST
+#    if features_to_use.__contains__('lm'):
+#        fin_model = BigramModel('Finance',root)
+#        hel_model = BigramModel('Health',root)
+#        res_model = BigramModel('Computers_and_the_Internet',root)
+#        co_model = BigramModel('Research',root)
+#
+#    for fileid in files.fileids():
+#        __output_header(output,directory_name,fileid)
+#        if features_to_use.__contains__('lm'):
+#            __write_lm(output,files,fileid,
+#                   fin_model,hel_model,res_model,co_model)
+#            output.write(' ')
+#        if features_to_use.__contains__('pos'):
+#            __write_pos(output,files,fileid,feature_list)
+#            output.write(' ')
+#        if features_to_use.__contains__('coarse'):
+#            __write_coarse(output,files,fileid)
+#            output.write(' ')
+#        output.write('\n')
+#    output.close()
 
 if __name__ == '__main__':
 #    get_coarse_level_features('Training_set_sm
 # all','test')
-    prepare_pos_features('Training_set_small', 'taggs')
+#    prepare_pos_features('Language_model_set', 'taggs')
+#    get_lm_features('Language_model_set','lm')
+    get_feature_file('Language_model_set',['lm','pos'],'lmpos')
