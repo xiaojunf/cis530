@@ -13,6 +13,7 @@ def __output_header(output, dataset,fileid):
     output.write(fileid.split('/')[0]+' ')
 
 def __write_coarse(output,files,fileid):
+    stop_list = open(ROOT+'stopwlist.txt').read().split()
     tokens = files.raw(fileid).split()
     sents = files.raw(fileid).split('\n')[:-1]
     output.write('tok:%d ' %len(tokens))
@@ -23,7 +24,7 @@ def __write_coarse(output,files,fileid):
     output.write('cap:%d ' %len([w for w in tokens if w[0]<='Z' and w[0]>='A']))
 
 def get_coarse_level_features(dataset,output_file):
-    stop_list = open(ROOT+'stopwlist.txt').read().split()
+
     output = open(output_file,'w')
     root = ROOT+dataset
 
@@ -40,8 +41,8 @@ def __merge_tag():
     ADJ = ['JJ','JJR','JJS']
     ADV = ['RB','RBR','RBS']
     PREP = ['IN']
-    tag_set = set(NOUNS).union(set(VERBS)).union(set(ADJ)).union(set(ADV)).union(set(PREP))
-
+#    tag_set = set(NOUNS).union(set(VERBS)).union(set(ADJ)).union(set(ADV)).union(set(PREP))
+    tag_set = NOUNS+VERBS+ADJ+ADV+PREP
     TAG_DIC = {}
     def add2dic(ls, tag):
         for l in ls:
@@ -70,9 +71,10 @@ def prepare_pos_features(Language_model_set, output_file):
     write2file('ADJ',200)
     write2file('ADV',100)
     write2file('PREP',100)
-
     output.close()
+
 def __write_pos(output,files,fileid,feature_list):
+    tag_set,TAG_DIC = __merge_tag()
     pos_tag_list = nltk.pos_tag(files.raw(fileid).split())
     word_list = [TAG_DIC[t]+w for (w,t) in pos_tag_list if t in tag_set]
     fqd = FreqDist(word_list)
@@ -100,14 +102,13 @@ class BigramModel:
         self.cfd = nltk.ConditionalFreqDist(self.bigram)
     def get_prob_per(self,word_list): #TODO MODIFY THE FIRST WORD FREQUENCY
         N = len(set(word_list))
-        prob = math.log(self.freqdist.freq(word_list[i]))
+        prob = math.log(self.freqdist.freq(word_list[0]))
         for (pre,w) in nltk.bigrams(word_list):
             prob = prob+math.log(self.cfd[pre][w]+1)-math.log(
                         len(self.cfd[pre].keys())+N)
         return prob, -len(word_list)*prob
 
-def __write_lm(output,files,fileid,root,
-               fin_model,hel_model,res_model,co_model):
+def __write_lm(output,files,fileid,fin_model,hel_model,res_model,co_model):
 
     word_list = files.raw(fileid).split()
     finprob,finper = fin_model.get_prob_per(word_list)
@@ -115,7 +116,7 @@ def __write_lm(output,files,fileid,root,
     resprob,resper = res_model.get_prob_per(word_list)
     coprob,coper = co_model.get_prob_per(word_list)
     output.write('finprob:%0.1f hlprob:%0.1f resprob:%0.1f coprob:%0.1f'
-                                    %(finprob,hlprob,resporb,coprob))
+                                    %(finprob,hlprob,resprob,coprob))
     output.write('finper:%0.1f hlper:%0.1f resper:%0.1f coper:%0.1f'
                                     %(finper,hlper,resper,coper))
 
@@ -131,7 +132,7 @@ def get_lm_features(dataset,output_file):
     output = open(output_file,'w')
     for fileid in files.fileids():
         __output_header(output,dataset,fileid)
-        __write_lm(output,files,fileid,root,
+        __write_lm(output,files,fileid,
                    fin_model,hel_model,res_model,co_model)
         output.write('\n')
     output.close()
@@ -139,7 +140,6 @@ def get_lm_features(dataset,output_file):
 def get_feature_file(directory_name,features_to_use,output_file):
     root = ROOT+directory_name
     files = PlaintextCorpusReader(root,'.*')
-    output = open(output_file,'w')
     fin_model = None
     hel_model = None
     res_model = None
@@ -156,7 +156,7 @@ def get_feature_file(directory_name,features_to_use,output_file):
     for fileid in files.fileids():
         __output_header(output,directory_name,fileid)
         if features_to_use.__contains__('lm'):
-            __write_lm(output,files,fileid,root,
+            __write_lm(output,files,fileid,
                    fin_model,hel_model,res_model,co_model)
         if features_to_use.__contains__('pos'):
             __write_pos(output,files,fileid,feature_list)
