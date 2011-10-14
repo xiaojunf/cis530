@@ -1,0 +1,40 @@
+1.3 Word Frequency:
+(b)	Top 30 words is
+	['the', ',', '.', 'of', 'and', 'to', 'a', 'in', 'that', 'is', 'was', 'for', '``', 		"''", 'The', 'with', 'it', 'as', 'he', 'his', 'on', 'be', ';', 'I', 'by', 'had', 		'at', '?', 'not', 'are']
+	Bottom 30 words is:
+	['lubricated', 'Strasny', 'no-driving', 'buffs', 'jewel', 'wahtahm', 'Mrads', 		'carbohydrate', 'bombarding', 'cacophony', 'anythin', 'Livery', 'Normal', 		'Artificer', 'Sessions', 'cut-to-a-familiar-pattern', 'roars', 'Chinaman', 		'decorous', '1911-1912', 'Attlee', 'digressions', '4.21', 'dollarette', 'Calmly', 		'pigen', 'mosaics', 'Lust', 'northerly', 'jawbone']
+	
+Most of the top 30 words are stop words or common words which are tend to be used 	in every senteces, while the bottom 30 word includes specific numbers, typos, and Capitalized words, which are more depends on the author and the content of the sentense.
+
+(d) The shape of the distribution is like the right half of Gassiaun Distribution. Most of the words appear less then 50 times, and few words appear more than 100 times. With the number of occurrences increases, the number of words decreases, but the decrease speed is from fast to slow.
+
+(e) The lexical diversity can be represented by entropy(implemented by get_entropy function), the larger the entropy is, the more lexical diversity the text has. Since the entropy of "news" is 10.17, the entropy of "fiction" is 9.44, the entropy of "editorial" is 9.85, and the entropy of "religion" is 9.40. So as we can se, the news category has the most lexical diversity.
+
+(f) I think the result would be changed a little, we would lose some information of the stop words, punctuation and capitalized words, but gain a little more information of other words with less frequency. If I don't care about the position of words, and want to campare the simularity of texts by IfTdf, I may normalize the data.
+
+2.1 Word Contexts
+(c) Using the function get_common_context(), the average number of shared contexts is 2.333
+
+2.2 Measuring Similarity
+(c) we use such 6 pairs in ordering:
+    0, ('the quick brown fox jumped over the lazy dog', 'the fox leaped over the tired dog'),
+    1, ('the quick brown fox jumped over the lazy dog', 'the fox'),
+    2, ('the quick brown fox jumped over the lazy dog', 'the lazy dog the lazy dog the lazy dog'),
+    3, ('the fox leaped over the tired dog', 'the fox'),
+    4, ('the fox leaped over the tired dog', 'the lazy dog the lazy dog the lazy dog'),
+    5, ('the fox', 'the lazy dog the lazy dog the lazy dog')
+    The similarity measured by the three metrics is:
+    'cosine':   [(3, 0.17, (5, 0.17), (1, 0.125), (2, 0.125), (4, 0.11), (0, 0.08)],
+                3,5,1,2,4,0
+    'dice':     [(0, 4.0), (2, 3.0), (1, 2.0), (3, 2.0), (4, 2.0), (5, 1.0)],
+                0,2,1,3,4,5
+    'jaccard':  [(0, 0.57), (2, 0.54), (3, 0.5), (4, 0.44), (1, 0.40), (5, 0.40)]
+                0,2,3,4,1,5
+
+(d) All these metrics only consider the sentences as bag of words, so first the words several times in a sentence has no difference from the word appeared only once.Second, Second, The ordering of words does not influence measuring result.
+    It seems dice and jaccard metrics are similar while consine is more different from these two.
+
+(e) The code can be seen in code.py, I use tf-idf and consine to calculate the similarity. The ordering of the 6 pairs is as follows:
+    [(2, 0.094), (3, 0.071), (1, 0.047), (0, 0.026), (4, 0.021), (5, 0.0)]
+    and the result is better than just using consine, but I think if use dice of jaccard instend of consine may be better.
+    
