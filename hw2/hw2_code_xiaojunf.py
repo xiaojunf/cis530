@@ -5,6 +5,7 @@ import nltk
 from nltk.probability import FreqDist
 import os
 import math
+from operator import itemgetter
 
 ROOT = '/home1/c/cis530/data-hw2/'
 
@@ -101,12 +102,12 @@ class BigramModel:
     def get_prob_per(self,word_list): #TODO MODIFY THE FIRST WORD FREQUENCY
         N = len(set(word_list))
 
-        prob = math.log(self.freqdist[word_list[0]]+1)-math.log(len(self.freqdist.keys())+N)
-
+#        prob = math.log(self.freqdist[word_list[0]]+1)-math.log(len(self.freqdist.keys())+N)
+        prob = 0
         for (pre,w) in nltk.bigrams(word_list):
             prob = prob+math.log(self.cfd[pre][w]+1)-math.log(
                         len(self.cfd[pre].keys())+N)
-        return prob, -len(word_list)*prob
+        return prob, -prob/float(len(word_list))
 
 def __write_lm(output,files,fileid,fin_model,hel_model,res_model,co_model):
 
@@ -131,9 +132,18 @@ def get_lm_features(dataset,output_file):
     co_model = BigramModel('Research',root)
     output = open(output_file,'w')
     for fileid in files.fileids():
+        word_list = files.words(fileid)
+        finprob,finper = fin_model.get_prob_per(word_list)
+        hlprob,hlper = hel_model.get_prob_per(word_list)
+        resprob,resper = res_model.get_prob_per(word_list)
+        coprob,coper = co_model.get_prob_per(word_list)
         __output_header(output,dataset,fileid)
-        __write_lm(output,files,fileid,
-                   fin_model,hel_model,res_model,co_model)
+        output.write('finprob:%0.1f hlprob:%0.1f resprob:%0.1f coprob:%0.1f '
+                                    %(finprob,hlprob,resprob,coprob))
+        output.write('finper:%0.1f hlper:%0.1f resper:%0.1f coper:%0.1f'
+                                    %(finper,hlper,resper,coper))
+#        __write_lm(output,files,fileid,
+#                   fin_model,hel_model,res_model,co_model)
         output.write('\n')
     output.close()
 
@@ -145,11 +155,36 @@ def combine_features(feature_files_list,output_file):
         fout.write(k+' '+v+' '+fins[1][k]+'\n')
     fout.close()
 
+def __get_features(text): # return docID, featureset, label
+    text = text.split(None,2)
+    return [text[0],(dict(pair.split(':') for pair in text[2].split()),text[1])]
 
+def get_NB_classifier(train_examples):
+
+    train_sets = [__get_features(line)[1] for line in open(train_examples).readlines()]
+    return nltk.NaiveBayesClassifier.train(train_sets)
+
+def classify_documents(test_examples,model,classifier_output):
+    output = open(classifier_output,'w')
+    for line in open(test_examples).readlines():
+        test_feature = __get_features(line)
+        output.write(test_feature[0]+' '+test_feature[1][1]+
+                     ' '+model.classify(test_feature[1][0])+'\n')
+    output.close()
+
+def get_fit_for_word(sentence,word,langmodel):
+    root = ROOT+'Language_model_set'
+    model = BigramModel(langmodel,root)
+    sentence = sentence.replace('<blank>', word)
+    return model.get_prob_per(nltk.word_tokenize(sentence))[0]
+
+def get_bestfit_topic(sentence, wordlist,topic):
+    return max([(word,get_fit_for_word(sentence,word,topic))
+        for word in wordlist],key=itemgetter(1))[0]
 
 if __name__ == '__main__':
-#    get_coarse_level_features('Training_set_sm
-# all','test')
+#    get_coarse_level_features('Training_set_large','Traininst_set_large.coarsefeature')
 #    prepare_pos_features('Language_model_set', 'taggs')
-#    get_lm_features('Language_model_set','lm')
-    get_feature_file('Language_model_set',['lm','pos'],'lmpos')
+#    get_lm_features('Training_set_large','Training_set_large.lmfeature')
+    get_lm_features('Training_set_large','Training_set_large.lmfeature')
+    pass
