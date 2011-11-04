@@ -150,9 +150,12 @@ def get_lm_features(dataset,output_file):
 def combine_features(feature_files_list,output_file):
     fins = [dict(line.split(None,1) for line in open(file).readlines()) for file in feature_files_list]
     fout = open(output_file,'w')
-
     for (k,v) in fins[0].items():
-        fout.write(k+' '+v+' '+fins[1][k]+'\n')
+        fout.write(k+' '+v.split(None,1)[0])
+        for file_dic in fins:
+            fout.write(' '+file_dic[k].split(None,1)[1][:-1])
+        fout.write('\n')
+
     fout.close()
 
 def __get_features(text): # return docID, featureset, label
@@ -160,14 +163,13 @@ def __get_features(text): # return docID, featureset, label
     return [text[0],(dict(pair.split(':') for pair in text[2].split()),text[1])]
 
 def get_NB_classifier(train_examples):
-
     train_sets = [__get_features(line)[1] for line in open(train_examples).readlines()]
     return nltk.NaiveBayesClassifier.train(train_sets)
 
 def classify_documents(test_examples,model,classifier_output):
     output = open(classifier_output,'w')
     for line in open(test_examples).readlines():
-        test_feature = __get_features(line)
+        test_feature = __get_features(line)  #fileid, (featureset, category)
         output.write(test_feature[0]+' '+test_feature[1][1]+
                      ' '+model.classify(test_feature[1][0])+'\n')
     output.close()
@@ -182,9 +184,34 @@ def get_bestfit_topic(sentence, wordlist,topic):
     return max([(word,get_fit_for_word(sentence,word,topic))
         for word in wordlist],key=itemgetter(1))[0]
 
+def writeup_1_6_1(test_file):
+    true_label = []
+    pred_label = []
+
+    def add2list(line):
+        line = line.split()
+        true_label.append(line[1])
+        pred_label.append(line[2])
+    map(add2list, open(test_file).readlines())
+    cm = nltk.ConfusionMatrix(true_label,pred_label)
+    print cm.pp(sort_by_count=True, show_percents=True,truncate=9)
 if __name__ == '__main__':
-#    get_coarse_level_features('Training_set_large','Traininst_set_large.coarsefeature')
+#    get_coarse_level_features('Training_set_small','Training_set_small.coarsefeatures')
 #    prepare_pos_features('Language_model_set', 'taggs')
-#    get_lm_features('Training_set_large','Training_set_large.lmfeature')
-    get_lm_features('Training_set_large','Training_set_large.lmfeature')
+#    get_lm_features('Test_set','Test_set.lmfeatures')
+#    get_lm_features('Training_set_small','Training_set_small.lmfeature')
+#    prepare_pos_features('Language_model_set','feature_set_file')
+#    combine_features(['Test_set.lmfeatures','Test_set.coarsefeatures','Test_set.posfeatures'],'Test_set.lmcoaposfeatures')
+#    combine_features(['Training_set_small.coarsefeatures','Training_set_small.lmfeatures','Training_set_small.posfeatures'],'Training_set_small.coalmposfeatures')
+#    combine_features(['Training_set_large.coarsefeatures','Training_set_large.posfeatures'],'Training_set_large.coaposfeatures')
+#    combine_features(['Test_set.lmfeatures','Test_set.posfeatures'],'Test_set.lmposfeatures')
+#    combine_features(['Test_set.coarsefeatures','Test_set.posfeatures'],'Test_set.coaposfeatures')
+#    classifier = get_NB_classifier("Training_set_large.lmposfeatures")
+#    classify_documents("Test_set.lmposfeatures",classifier,"test_set_lmpos.pred")
+#    classifier = get_NB_classifier("Training_set_small.coalmposfeatures")
+#    classify_documents("Test_set.lmcoaposfeatures",classifier,"test_set_small_lmcoapos.pred")
+
+    writeup_1_6_1('test_set_small_lmcoapos.pred')
+
+
     pass

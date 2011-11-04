@@ -1,0 +1,5 @@
+graph G {
+dog -- cat;
+dog -- computer;
+cat -- computer;
+}

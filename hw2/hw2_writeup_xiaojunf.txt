@@ -1,0 +1,97 @@
+﻿ The confusion matrix is as follows    
+
+---------------------------+-----------------------------+
+                   Finance | <26.2%>  6.6%   4.2%   3.0% |
+Computers_and_the_Internet |   4.0% <13.6%>  2.0%   0.4% |
+                    Health |   0.2%   0.8% <10.0%>  9.0% |
+                  Research |   2.8%   2.2%   4.2% <10.8%>|
+---------------------------+-----------------------------+
+(row = reference; col = test)
+
+1 For Finance topic the accuracy is 26.2/(26.2+6.6+4.2+3)= 65.5%,
+  for Computer_and_the Internet, the accuracy is 13.6/(4+13.6+2+0.4)=68%
+  for Health, the accuracy is 10/(0.2+0.8+10+9)= 50%
+  for Research, the accuracy is 10.8/(2.8+2.2+4.2+10.8)=54%
+  Computers and the Internet should have higher accuracy since the articles in this topic are always more specific and narrower, while the research should always be confused with the others, since the topic is very general, it could contain the research paper about any other topic. The result in the matrix conform this, although Health is less accurate than Research, but we could observe that the errors in Health occur mainly in the Research column, which means it mainly confused with Research topic. Therefore, it is still Research that are frequently confused with other topics.
+
+2 Finance, Training:2000, test:200
+  Computer_and_the_internet/Health/Research, training:1000, test:100
+  Finance occupy the largest training and test files, while it is the same size of rest topics. 
+  Since Naive Bayes relies on the MLE probability, so the more training examples it has, the more accurate it should be, in this sense, the Finance shoule have the highest accuracy, but actually it is less accurate than Computer and the internet, and this may be explained by the reason I mentioned above, because the latter one is more specific.
+
+3
+only coarse 
+---------------------------+-----------------------------+
+                   Finance | <19.6%>  7.0%   5.4%   8.0% |
+Computers_and_the_Internet |  10.6%  <2.2%>  3.2%   4.0% |
+                    Health |   7.4%   3.6%  <4.6%>  4.4% |
+                  Research |   7.8%   3.8%   4.0%  <4.4%>|
+---------------------------+-----------------------------+
+(row = reference; col = test)
+accuracy = 19.8+2.2+4.6+4.4=31.0%
+
+only lm
+---------------------------+-----------------------------+
+                   Finance | <10.0%> 10.4%  11.8%   7.8% |
+Computers_and_the_Internet |      . <10.4%>  7.2%   2.4% |
+                    Health |      .   4.8% <12.4%>  2.8% |
+                  Research |      .   4.6%   4.4% <11.0%>|
+---------------------------+-----------------------------+
+(row = reference; col = test)
+accuracy = 10+10.4+12.4+11 = 43.8%
+
+only pos
+---------------------------+-----------------------------+
+                   Finance | <29.4%>  5.6%   2.8%   2.2% |
+Computers_and_the_Internet |   4.8% <12.2%>  2.6%   0.4% |
+                    Health |   0.2%   2.0%  <8.4%>  9.4% |
+                  Research |   3.0%   1.6%   4.2% <11.2%>|
+---------------------------+-----------------------------+
+(row = reference; col = test)
+accuracy = 29.4+12.2+8.4+11.2 = 61.2%
+Since pos > lm > coarse, so we choose (pos,lm) and (pos, coarse) two combinations, 
+
+(pos,lm)
+---------------------------+-----------------------------+
+                   Finance | <26.4%>  7.0%   4.0%   2.6% |
+Computers_and_the_Internet |   3.8% <14.2%>  1.6%   0.4% |
+                    Health |      .   1.2% <10.2%>  8.6% |
+                  Research |   2.8%   2.0%   3.6% <11.6%>|
+---------------------------+-----------------------------+
+(row = reference; col = test)
+accuracy = 26.4+14.2+10.2+11.6 = 62.4%
+
+(pos,coarse)
+---------------------------+-----------------------------+
+                   Finance | <28.8%>  5.8%   3.0%   2.4% |
+Computers_and_the_Internet |   6.2% <10.6%>  2.6%   0.6% |
+                    Health |   0.6%   1.0%  <9.2%>  9.2% |
+                  Research |   3.4%   1.2%   4.2% <11.2%>|
+---------------------------+-----------------------------+
+(row = reference; col = test)
+accuracy = 28.8+10.6+9.2+11.2=59.8%
+
+We think combination would do better because intuitionly, with more features, the category could be defined and distinguished more clearly, and in fact, the combination of pos and lm can do better than any single feature, which conform our expectation. But what I want to mention here is that since Naive Bayes assumes that all the feature should be conditional independent, but lm in which we both calculate perplexity and probability which are totally dependent on each other, so we think if we only use one of them, the accuracy may be higer.
+
+4 With Training_set_small
+---------------------------+-----------------------------+
+                   Finance | <19.4%> 11.4%   5.2%   4.0% |
+Computers_and_the_Internet |   4.8% <13.6%>  0.4%   1.2% |
+                    Health |      .   3.6%  <7.6%>  8.8% |
+                  Research |   1.0%   2.2%   3.6% <13.2%>|
+---------------------------+-----------------------------+
+(row = reference; col = test)
+
+With training_set_large
+---------------------------+-----------------------------+
+                   Finance | <26.2%>  6.6%   4.2%   3.0% |
+Computers_and_the_Internet |   4.0% <13.6%>  2.0%   0.4% |
+                    Health |   0.2%   0.8% <10.0%>  9.0% |
+                  Research |   2.8%   2.2%   4.2% <10.8%>|
+---------------------------+-----------------------------+
+accuracy = 19.4+13.6+7.6+13.2 = 53.8%, the accuracy decreases, compare the two confusion matrix, we can observe that 1) The overall acuracy decreases. 2) The accuracy of each topic decreases except for the Research topic. 3) The confusion becomes larger for each topic except for the Research topic.
+For the first observation, we think it is because we have fewer data for training, so the accuracy of Naive Bayes which relies on MLE decreases.
+For the observation 2 and 3, we think since the Research topic is general, so the fewer training data it gets, the fewer words that would confused the classifier for this topic it will meet, so the performance on Research is better while the influence is opposite on the rest topics.
+
+
+

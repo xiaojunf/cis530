@@ -63,10 +63,10 @@ def vectorize(feature_space,sentence):
     map(add2vector, sentence.split())
     return vector
 
-def jaccard_similarity(X,Y):
+def dice_similarity(X,Y):
     return 2.0*sum(np.array(X)*np.array(Y))/(sum(X)+sum(Y))
 
-def dice_similarity(X,Y):
+def jaccard_similarity(X,Y):
     x_array = np.array(X)
     y_array = np.array(Y)
     return sum(x_array*y_array)*1.0/len((x_array+y_array).nonzero())
