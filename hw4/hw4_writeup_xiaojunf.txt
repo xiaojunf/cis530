@@ -1,0 +1,159 @@
+3.1
+a)
+noun
+['call', 'side', 'part', 'operation', 'movement', 'front', 'home', 'attacks', 'rights', 'law']
+verb
+['made', 'give', 'call', 'shooting', 'shootings', 'find', 'move', 'found', 'killing', 'show']
+adjective
+['federal', 'medical', 'local', 'made', 'home', 'unwanted', 'killing', 'anti', 'front', 'canadian']
+adverb
+['home', 'part']
+
+c)
+noun
+['gynecologists', 'rosary', 'fbi', 'medical', 'canada', 'oct', 'enforcement', 'jail', 'obstetrician', 'vermont']
+verb
+['jail', 'buffalo', 'side', 'lambs', 'hayes', 'slaying', 'groups', 'pickets', 'bombings', 'home']
+adjective
+['killing', 'anti', 'front', 'canadian', 'side', 'itinerant', 'found', 'unwanted', 'medical', 'local']
+adverb
+['part', 'home']
+
+d)
+10 most specific words
+['slaying', 'gynecologists', 'jail', 'obstetrician', 'found',
+'fbi', 'medical', 'put', 'bombings', 'killing']
+
+10 least specific words
+['groups', 'operation', 'agents', 'part', 'law',
+'home', 'protester', 'attacks', 'protesters', 'anti']
+
+e) Yes,totally
+
+f)
+20 most specific words
+['Marlin', 'human', 'get', 'gets', 'obstetrics',
+'diabetes', 'slayings', 'slaying', 'supermarket', 'taxi',
+'murders', 'least', 'murder', 'refrigerator', 'cruise',
+'less', 'does', 'errands', 'marching', 'jail']
+
+20 least specific words
+['thing', 'groups', 'change', 'causes', 'matters',
+'measure', 'cause', 'group', 'relationships', 'force',
+'property', 'unit', 'series', 'execution', 'subject',
+'muck', 'voice', 'people', 'power', 'time']
+
+3.2 Word Similarity
+a)
+d30047t.ts
+[['control', 'project', 'part', 'endeavour', 'endeavor', 'mission'],
+['control', 'propulsion', 'endeavor', 'endeavour', 'find'],
+['control', 'controllers', 'coupling', 'robot'],
+['control', 'propulsion', 'agency', 'find'],
+['control', 'stages', 'unity', 'agency'],
+['control', 'part', 'component', 'components'],
+['pound', 'cylinders', 'pounds'],
+['pound', 'ton', 'pounds'], 
+['booster', 'rocket', 'thrusters'],
+['modules', 'vestibule', 'module'],
+['component', 'part', 'modules', 'components', 'module'],
+['modules', 'flight', 'module'],
+['russian', 'controllers', 'russians'],
+['connectors', 'cylinders', 'system'],
+['connectors', 'coupling', 'system'],
+['capture', 'find', 'propulsion'],
+['unity', 'stages', 'agency', 'space'],
+['part', 'orbit', 'space'],
+['project', 'part', 'system'],
+['foot', 'part', 'system'],
+['part', 'system', 'passageway'],
+['foot', 'miles', 'kilometers'],
+['propulsion', 'launch', 'find', 'launching', 'launches'],
+['launches', 'junk', 'launch', 'tugboat'],
+['propulsion', 'flight', 'find'],
+['fire', 'part', 'component', 'components'],
+['fire', 'part', 'mission'],
+['controllers', 'cosmonauts', 'astronauts'],
+['part', 'orbit', 'passageway'],
+['vestibule', 'orbit', 'passageway']]
+
+d31013t.ts
+[['slaying', 'shootings', 'shooting', 'killing'],
+['shootings', 'shooting', 'find'],
+['abortion', 'abortions', 'movement'],
+['abortion', 'abortions', 'killing'],
+['news', 'interest', 'show'],
+['attacks', 'performing', 'operation', 'move'],
+['move', 'call', 'movement'],
+['clinics', 'clinic', 'hospitals'],
+['front', 'conspiracy', 'groups', 'interest', 'movement'],
+['anti', 'protester', 'agents', 'protesters', 'witness', 'opponents'],
+['front', 'home', 'side'],
+['home', 'part', 'side'],
+['investigating', 'operation', 'performing', 'part'],
+['performing', 'operation', 'part', 'interest'],
+['attacks', 'operation', 'bombings'],
+['operation', 'performing', 'find'],
+['anti', 'protester', 'lambs', 'protesters', 'witness', 'opponents'],
+['anti', 'protester', 'opponents', 'protesters', 'witness', 'women'],
+['doctors', 'obstetrician', 'gynecologists', 'doctor'],
+['doctor', 'interest', 'doctors'],
+['demonstrators', 'pickets', 'protester', 'protesters'],
+['front', 'interest', 'rights'],
+['part', 'interest', 'rights'],
+['part', 'groups', 'interest'],
+['part', 'groups', 'law'],
+['part', 'law', 'rights']]
+
+d30008t.ts
+[['charges', 'due', 'interest'],
+['papua', 'southeast', 'top'],
+['papua', 'top', 'capital'],
+['charges', 'controls', 'interest'],
+['news', 'controls', 'interest'],
+['summit', 'meeting', 'forum'],
+['malaysian', 'indonesian', 'philippine'],
+['indonesian', 'malaysian', 'asian']]
+
+d30037t.ts
+[['settlements', 'disaster', 'withdrawal'],
+['process', 'settlements', 'wing'],
+['process', 'appointment', 'role', 'negotiations'],
+['arabs', 'palestinians', 'palestinian'],
+['front', 'settlements', 'wing', 'camps'],
+['sabra', 'lebanese', 'israeli', 'syrian', 'israelis']]
+
+d30006t.ts
+[['sides', 'cap', 'part', 'back', 'side'],
+['union', 'association', 'deal'],
+['amount', 'million', 'deal'],
+['amount', 'association', 'system', 'deal'],
+['implementation', 'agreement', 'deal', 'find'],
+['contracts', 'agreement', 'deal'],
+['amount', 'part', 'revenue'],
+['back', 'part', 'stern', 'side', 'system', 'sides'],
+['players', 'back', 'player'],
+['player', 'owners', 'regular', 'players'],
+['player', 'owners', 'hunter', 'agents', 'players'],
+['amount', 'minimum', 'part'],
+['implementation', 'raises', 'find'],
+['side', 'raises', 'sides'],
+['union', 'teams', 'sides', 'association', 'side'],
+['implementation', 'training', 'games', 'find', 'negotiations'],
+['implementation', 'proposal', 'proposals', 'find', 'agreement'],
+['arbitration', 'bargaining', 'negotiations'],
+['training', 'part', 'games', 'negotiations', 'labor'],
+['nov', 'oct', 'aug'],
+['amount', 'part', 'system', 'association'],
+['sides', 'part', 'games', 'system', 'side'],
+['sides', 'part', 'system', 'association', 'side'],
+['proposals', 'proposal', 'call', 'agreement'],
+['counterproposal', 'proposal', 'proposals'],
+['proposal', 'proposals', 'exception', 'agreement'],
+['proposal', 'proposals', 'agreement', 'dispute'],
+['proposal', 'proposals', 'sides', 'side'],
+['sides', 'games', 'bird', 'side'],
+['union', 'league', 'association'],
+['union', 'collective', 'association']]
+
+b)
